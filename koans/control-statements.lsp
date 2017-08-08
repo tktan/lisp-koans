@@ -13,52 +13,49 @@
 ;;   limitations under the License.
 
 (define-test test-if-then-else
-    (let ((result))
-      (if t
-          (setf result "true value")
-          (setf result "false value"))
-      (assert-equal result ____)
-      (if nil
-          (setf result "true value")
-          (setf result "false value"))
-      (assert-equal result ____)))
-
+  (let ((result))
+    (if t
+        (setf result "true value")
+        (setf result "false value"))
+    (assert-equal result "true value")
+    (if nil
+        (setf result "true value")
+        (setf result "false value"))
+    (assert-equal result "false value")))
 
 (define-test test-when-and-unless
-    (let ((result-1 nil)
-          (result-2 nil)
-          (when-nums nil)
-          (unless-nums nil))
-      (dolist (x '(1 2 3 4 5 6 7 8 9 10))
-        (when (> x 5)
-          (setf result-1 x)
-          (push x when-nums))
-        (unless (> x 5)
-          (setf result-2 x)
-          (push x unless-nums)))
-      (assert-equal result-1 ___)
-      (assert-equal result-2 ___)
-      (assert-equal when-nums ___)
-      (assert-equal unless-nums ___)))
-
+  (let ((result-1 nil)
+        (result-2 nil)
+        (when-nums nil)
+        (unless-nums nil))
+    (dolist (x '(1 2 3 4 5 6 7 8 9 10))
+      (when (> x 5)
+        (setf result-1 x)
+        (push x when-nums))
+      (unless (> x 5)
+        (setf result-2 x)
+        (push x unless-nums)))
+    (assert-equal result-1 10)
+    (assert-equal result-2 5)
+    (assert-equal when-nums '(10 9 8 7 6))
+    (assert-equal unless-nums '(5 4 3 2 1))))
 
 (define-test test-and-short-circuits
-    "and only evaluates forms until one evaluates to nil"
+  "and only evaluates forms until one evaluates to nil"
   (assert-equal
-   ____
+   2
    (let ((x 0))
      (and
       (setf x (+ 1 x))
       (setf x (+ 1 x))
-      nil ;; <- ends execution of and.
+      nil                               ; <- ends execution of and.
       (setf x (+ 1 x)))
      x)))
 
-
 (define-test test-or-also-short-circuits
-    "or only evaluates until one argument evaluates to non-nil"
+  "or only evaluates until one argument evaluates to non-nil"
   (assert-equal
-   ____
+   1
    (let ((x 0))
      (or
       (setf x (+ 1 x))
