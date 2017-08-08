@@ -174,9 +174,9 @@ assertion.")
 (defun use-debugger-p (condition)
   "Debug or ignore errors."
   (cond
-   ((eq :ask *use-debugger*)
-    (y-or-n-p "~A -- debug?" condition))
-   (*use-debugger*)))
+    ((eq :ask *use-debugger*)
+     (y-or-n-p "~A -- debug?" condition))
+    (*use-debugger*)))
 
 (defun use-debugger (&optional (flag t))
   "Use the debugger when testing, or not."
@@ -241,10 +241,10 @@ assertion.")
 
 (defun package-table (package &optional create)
   (cond
-   ((gethash (find-package package) *test-db*))
-   (create
-    (setf (gethash package *test-db*) (make-hash-table)))
-   (t (warn "No tests defined for package: ~S" package))))
+    ((gethash (find-package package) *test-db*))
+    (create
+     (setf (gethash package *test-db*) (make-hash-table)))
+    (t (warn "No tests defined for package: ~S" package))))
 
 ;;; Global tags database
 
@@ -254,10 +254,10 @@ assertion.")
 (defun package-tags (package &optional create)
   "Return the tags DB for the package."
   (cond
-   ((gethash (find-package package) *tag-db*))
-   (create
-    (setf (gethash package *tag-db*) (make-hash-table)))
-   (t (warn "No tags defined for package: ~S" package))))
+    ((gethash (find-package package) *tag-db*))
+    (create
+     (setf (gethash package *tag-db*) (make-hash-table)))
+    (t (warn "No tags defined for package: ~S" package))))
 
 (defclass unit-test ()
   ((doc
@@ -277,13 +277,13 @@ assertion.")
   "Separate the components of the body."
   (let ((item (first body)))
     (cond
-     ((and (listp item) (eq :tag (first item)))
-      (parse-body (rest body) doc (nconc (rest item) tag)))
-     ((and (stringp item) (not doc) (rest body))
-      (if tag
-          (values doc tag (rest body))
-          (parse-body (rest body) doc tag)))
-     (t (values doc tag body)))))
+      ((and (listp item) (eq :tag (first item)))
+       (parse-body (rest body) doc (nconc (rest item) tag)))
+      ((and (stringp item) (not doc) (rest body))
+       (if tag
+           (values doc tag (rest body))
+           (parse-body (rest body) doc tag)))
+      (t (values doc tag body)))))
 
 (defmacro define-test (name &body body)
   "Store the test in the test database."
@@ -295,8 +295,8 @@ assertion.")
         (make-instance 'unit-test :doc doc :code ',code))
        ;; Tags
        (loop for tag in ',tag do
-             (pushnew
-              ',name (gethash tag (package-tags *package* t))))
+            (pushnew
+             ',name (gethash tag (package-tags *package* t))))
        ;; Return the name of the test
        ',name)))
 
@@ -307,7 +307,7 @@ assertion.")
   (let ((table (package-table package)))
     (when table
       (loop for test-name being each hash-key in table
-            collect test-name))))
+         collect test-name))))
 
 (defun test-documentation (name &optional (package *package*))
   "Return the documentation for the test."
@@ -337,33 +337,33 @@ assertion.")
         (unless (null table)
           ;; Remove tests
           (loop for name in names
-                always (remhash name table)
-                collect name into removed
-                finally (return removed))
+             always (remhash name table)
+             collect name into removed
+             finally (return removed))
           ;; Remove tests from tags
           (loop with tags = (package-tags package)
-                for tag being each hash-key in tags
-                using (hash-value tagged-tests)
-                do
-                (setf
-                 (gethash tag tags)
-                 (set-difference tagged-tests names)))))))
+             for tag being each hash-key in tags
+             using (hash-value tagged-tests)
+             do
+               (setf
+                (gethash tag tags)
+                (set-difference tagged-tests names)))))))
 
 ;;; Manage tags
 
 (defun %tests-from-all-tags (&optional (package *package*))
   "Return all of the tests that have been tagged."
   (loop for tests being each hash-value in (package-tags package)
-        nconc (copy-list tests) into all-tests
-        finally (return (delete-duplicates all-tests))))
+     nconc (copy-list tests) into all-tests
+     finally (return (delete-duplicates all-tests))))
 
 (defun %tests-from-tags (tags &optional (package *package*))
   "Return the tests associated with the tags."
   (loop with table = (package-tags package)
-        for tag in tags
-        as tests = (gethash tag table)
-        nconc (copy-list tests) into all-tests
-        finally (return (delete-duplicates all-tests))))
+     for tag in tags
+     as tests = (gethash tag table)
+     nconc (copy-list tests) into all-tests
+     finally (return (delete-duplicates all-tests))))
 
 (defun list-tags (&optional (package *package*))
   "Return a list of the tags in package."
@@ -386,9 +386,9 @@ assertion.")
       (let ((table (package-tags package)))
         (unless (null table)
           (loop for tag in tags
-                always (remhash tag table)
-                collect tag into removed
-                finally (return removed))))))
+             always (remhash tag table)
+             collect tag into removed
+             finally (return removed))))))
 
 ;;; Assert macros
 
@@ -523,7 +523,7 @@ assertion.")
     (t nil)))
 
 (defun internal-assert
-       (type form code-thunk expected-thunk extras test)
+    (type form code-thunk expected-thunk extras test)
   "Perform the assertion and record the results."
   (let* ((expected (multiple-value-list (funcall expected-thunk)))
          (actual (multiple-value-list (funcall code-thunk)))
@@ -531,7 +531,7 @@ assertion.")
          (incomplete (or (form-contains-one-of-p form +blanks+)
                          (form-contains-one-of-p expected '(:blank-value)))))
 
-   (cond
+    (cond
       (incomplete (progn
                     (incf *incomplete*)
                     (push :incomplete *koan-assert-list*)))
@@ -649,9 +649,9 @@ assertion.")
     (values *koan-assert-list* nil)))
 
 (defun koan-result (code)
-   "Run the code.  Return a list of assertion result elements.
-    An assertion result element is one of :pass, :fail, :error, :incomplete"
-   (run-koan-thunk code))
+  "Run the code.  Return a list of assertion result elements.
+   An assertion result element is one of :pass, :fail, :error, :incomplete"
+  (run-koan-thunk code))
 
 (defun record-result (test-name code results)
   "Run the test code and record the result."
@@ -681,46 +681,46 @@ assertion.")
 (defun %run-all-thunks (&optional (package *package*))
   "Run all of the test thunks in the package."
   (loop
-   with results = (make-instance 'test-results)
-   for test-name being each hash-key in (package-table package)
-   using (hash-value unit-test)
-   if unit-test do
-   (record-result test-name (code unit-test) results)
-   else do
-   (push test-name (missing-tests results))
-   ;; Summarize and return the test results
-   finally
-   (summarize-results results)
-   (return results)))
+     with results = (make-instance 'test-results)
+     for test-name being each hash-key in (package-table package)
+     using (hash-value unit-test)
+     if unit-test do
+       (record-result test-name (code unit-test) results)
+     else do
+       (push test-name (missing-tests results))
+     ;; Summarize and return the test results
+     finally
+       (summarize-results results)
+       (return results)))
 
 (defun %run-thunks (test-names &optional (package *package*))
   "Run the list of test thunks in the package."
   (loop
-   with table = (package-table package)
-   and results = (make-instance 'test-results)
-   for test-name in test-names
-   as unit-test = (gethash test-name table)
-   if unit-test do
-   (record-result test-name (code unit-test) results)
-   else do
-   (push test-name (missing-tests results))
-   finally
-   (summarize-results results)
-   (return results)))
+     with table = (package-table package)
+     and results = (make-instance 'test-results)
+     for test-name in test-names
+     as unit-test = (gethash test-name table)
+     if unit-test do
+       (record-result test-name (code unit-test) results)
+     else do
+       (push test-name (missing-tests results))
+     finally
+       (summarize-results results)
+       (return results)))
 
 (defun run-koans (package)
   "Run the list of test thunks in the package. Stopping
    at a failure or incomplete, with more helpful messaging"
   (loop
-    with koan-results = nil
-    for test-name being each hash-key in (package-table package)
-    using (hash-value unit-test)
-    if unit-test do
-      (push (list test-name (koan-result (code unit-test))) koan-results)
-    else do
-      (push (list test-name :missing) koan-results)
-    until (and (not *proceed-after-failure*) (any-non-pass-p koan-results))
-    finally (return koan-results)))
+     with koan-results = nil
+     for test-name being each hash-key in (package-table package)
+     using (hash-value unit-test)
+     if unit-test do
+       (push (list test-name (koan-result (code unit-test))) koan-results)
+     else do
+       (push (list test-name :missing) koan-results)
+     until (and (not *proceed-after-failure*) (any-non-pass-p koan-results))
+     finally (return koan-results)))
 
 (defun any-non-pass-p (koan-results)
   (dolist (one-koan koan-results)
